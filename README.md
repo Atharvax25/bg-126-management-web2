@@ -1,262 +1,537 @@
-# Management-E-Commerce-Website
-# 🛒 ForgeCart – Frontend (Client Side UI Only)
+# Management E-Commerce Website - ForgeCart
 
-## 📌 Overview
+ForgeCart is now a full-stack Management E-Commerce System. The project started as a static HTML/CSS storefront UI and has been upgraded with a working Node.js backend, MongoDB database integration, JWT authentication, product APIs, and order APIs.
 
-**ForgeCart** is a frontend-only e-commerce web application developed for the **BackForge Hackathon**.
+## Overview
 
-It provides a complete **storefront UI prototype** that simulates a real-world shopping experience while leaving all backend logic—such as APIs, authentication, and database integration—to be implemented separately.
+ForgeCart provides a complete e-commerce flow:
 
-This project is ideal for:
+- Static multi-page frontend using HTML, CSS, and JavaScript
+- Express.js backend API
+- MongoDB database using Mongoose
+- User registration and login
+- JWT-protected routes
+- Dynamic product loading
+- Search and category filtering
+- Order creation and order history
+- Product stock validation
 
-* Hackathon participants
-* Backend developers looking for a ready UI
-* Learning frontend architecture of e-commerce systems
+## Tech Stack
 
----
+Frontend:
 
-## 🚀 Key Highlights
+- HTML5
+- CSS3
+- JavaScript
+- Font Awesome
+- Google Fonts
 
-* Modern **e-commerce UI/UX**
-* Fully **responsive design**
-* **Reusable components**
-* **Backend-ready structure**
-* Clean and scalable frontend architecture
+Backend:
 
----
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT
+- bcryptjs
+- dotenv
+- CORS
 
-## 🏗️ System Architecture
+## Project Structure
 
-ForgeCart follows a **static multi-page architecture**:
-
-* Each feature has its own HTML page
-* Shared styling via a global CSS file
-* No backend or API integration
-* Static placeholder data
-
-### 🔹 Architecture Layers
-
-**1. UI Layer**
-
-* HTML5 (structure)
-* CSS (styling)
-* Font Awesome (icons)
-
-**2. Logic Layer**
-
-* Minimal / no JavaScript
-* No real functionality implemented
-
-**3. Data Layer**
-
-* No database
-* Static product and order data
-
----
-
-## 🛍️ Features & Modules
-
-### 🏠 Landing & Product Listing
-
-* Hero section
-* Product grid layout
-* Search bar UI
-* Category filters (UI only)
-* Featured products
-
----
-
-### 📦 Product Details
-
-* Product image gallery
-* Pricing section
-* Specifications
-* Add to Cart & Buy Now buttons
-
----
-
-### 🛒 Cart
-
-* Item listing
-* Quantity controls (UI)
-* Remove item option
-* Price summary
-* Checkout button
-
----
-
-### 💳 Checkout
-
-* Shipping form
-* Payment form
-* Order summary
-* Place Order button
-
----
-
-### 📜 Orders
-
-* Order history UI
-* Status tracking
-* Timestamps
-* Order summary
-
----
-
-### 🔐 Authentication
-
-* Login page
-* Registration page
-* User onboarding UI
-
-> ⚠️ Note: Authentication is UI-only. No real login system is implemented.
-
----
-
-## 🎨 UI/UX Design
-
-### Design Principles
-
-* Glassmorphism UI
-* Modern storefront feel
-* Clean and minimal navigation
-* Mobile-first responsiveness
-
-### Styling
-
-* Dark theme
-* Orange accent highlights
-* Rounded components
-* Shadows & hover effects
-
-### Interactions
-
-* Smooth transitions
-* Hover animations
-* Interactive form styling
-
----
-
-## 📐 Layout Structure
-
-* Multi-page navigation
-* Consistent header & footer
-* Grid-based product layout
-* Responsive design across devices
-
----
-
-## 🧰 Tech Stack
-
-* **HTML5**
-* **CSS3**
-* **Font Awesome 6.4.0**
-* **Google Fonts**
-
-  * Outfit
-  * Inter
-
----
-
-## 📁 Project Structure
-
-```
+```text
 /
-├── index.html        # Landing / Product Listing
-├── product.html      # Product Details
-├── cart.html         # Cart Page
-├── checkout.html     # Checkout Flow
-├── orders.html       # Order History
-├── login.html        # Login Page
-├── register.html     # Registration Page
-├── style.css         # Global Styles
-├── assets/           # Images & Media
-└── components/       # Reusable UI Components
+|-- backend/
+|   |-- server.js
+|   |-- config/
+|   |   `-- db.js
+|   |-- controllers/
+|   |   |-- authController.js
+|   |   |-- productController.js
+|   |   `-- orderController.js
+|   |-- middleware/
+|   |   `-- authMiddleware.js
+|   |-- models/
+|   |   |-- User.js
+|   |   |-- Product.js
+|   |   `-- Order.js
+|   `-- routes/
+|       |-- authRoutes.js
+|       |-- productRoutes.js
+|       `-- orderRoutes.js
+|-- js/
+|   |-- api.js
+|   |-- auth.js
+|   |-- products.js
+|   `-- orders.js
+|-- assets/
+|   `-- images/
+|-- css/
+|   `-- styles.css
+|-- index.html
+|-- login.html
+|-- register.html
+|-- orders.html
+|-- cart.html
+|-- checkout.html
+|-- product.html
+|-- .env.example
+|-- package.json
+`-- README.md
 ```
 
----
+## Backend Features Added
 
-## 📱 Responsiveness
+### Express Server
 
-ForgeCart is optimized for:
+The backend starts from:
 
-* Desktop 💻
-* Tablet 📱
-* Mobile 📲
+```text
+backend/server.js
+```
 
-Built using:
+It includes:
 
-* CSS Grid
-* Flexbox
-* Mobile-first approach
+- Express server setup
+- CORS middleware
+- JSON body parsing
+- Static frontend hosting
+- API route mounting
+- Health check route
+- MongoDB connection and product seeding
 
----
+Server URL:
 
-## ⚠️ Limitations
+```text
+http://localhost:5000
+```
 
-This project is **frontend-only** and does NOT include:
+Health check:
 
-* Backend integration
-* API connectivity
-* Database storage
-* Authentication system
-* Cart persistence
-* Order processing
-* Search functionality
-* Filtering logic
-* Inventory management
+```text
+GET /health
+```
 
----
+## Database Connection
 
-## 🔮 Future Enhancements
+MongoDB is connected using Mongoose in:
 
-* Backend API integration
-* JWT/session authentication
-* Dynamic product catalog
-* Real-time search
-* Advanced filtering
-* Persistent cart
-* Payment gateway integration
-* Order & inventory management
-* Wishlist system
-* Reviews & ratings
-* Personalized dashboards
+```text
+backend/config/db.js
+```
 
----
+The connection string is stored in `.env` as:
 
-## 🎯 Purpose
+```env
+MONGO_URI=your_mongodb_connection_string
+```
 
-ForgeCart is designed to:
+The project supports MongoDB Atlas. If using Atlas, make sure your IP address is added in Atlas Network Access.
 
-* Provide a **ready-to-use frontend**
-* Accelerate **hackathon development**
-* Help teams focus on **backend implementation**
+## Models
 
----
+### User Model
 
-## 🏁 Conclusion
+File:
 
-ForgeCart serves as a **complete UI foundation** for building a full-stack e-commerce platform.
+```text
+backend/models/User.js
+```
 
-It enables developers to:
+Fields:
 
-* Skip UI development time
-* Focus on backend logic
-* Integrate APIs seamlessly
+- `name`
+- `email`
+- `password`
+- `role`
 
----
+Notes:
 
-## 🤝 Contribution
+- Email is unique
+- Password is hashed before saving
+- Role can be `user` or `admin`
 
-This project is part of the **BackForge Hackathon ecosystem**.
-Feel free to fork, extend, and integrate your backend solutions.
+### Product Model
 
----
+File:
 
-## 📜 License
+```text
+backend/models/Product.js
+```
 
-This project is open for educational and hackathon use.
+Fields:
 
----
+- `name`
+- `price`
+- `image`
+- `category`
+- `description`
+- `stock`
 
-💡 *Build fast. Ship faster. Forge better.*
+### Order Model
+
+File:
+
+```text
+backend/models/Order.js
+```
+
+Fields:
+
+- `userId`
+- `products`
+- `totalAmount`
+- `status`
+
+## Authentication
+
+Authentication was added using bcrypt and JWT.
+
+Files:
+
+```text
+backend/controllers/authController.js
+backend/routes/authRoutes.js
+backend/middleware/authMiddleware.js
+```
+
+Features:
+
+- Register user
+- Login user
+- Hash passwords with bcrypt
+- Generate JWT token
+- Protect private routes
+- Admin-only middleware
+
+Auth APIs:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+```
+
+Register request example:
+
+```json
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "password": "password123"
+}
+```
+
+Login request example:
+
+```json
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+```
+
+Login response includes:
+
+- JWT token
+- User details
+
+## Product APIs
+
+Files:
+
+```text
+backend/controllers/productController.js
+backend/routes/productRoutes.js
+```
+
+Routes:
+
+```text
+GET /api/products
+GET /api/products?search=hoodie
+GET /api/products?category=clothing
+POST /api/products
+PUT /api/products/:id
+DELETE /api/products/:id
+```
+
+Notes:
+
+- `GET /api/products` is public
+- Create, update, and delete product routes are protected
+- Product management routes require admin role
+- Search works on product name, category, and description
+- Category filtering supports values like `clothing`, `digital`, and `accessories`
+
+## Order APIs
+
+Files:
+
+```text
+backend/controllers/orderController.js
+backend/routes/orderRoutes.js
+```
+
+Routes:
+
+```text
+POST /api/orders
+GET /api/orders
+```
+
+Features:
+
+- Requires JWT token
+- Creates order for logged-in user
+- Checks if product exists
+- Checks stock before creating order
+- Decreases product stock after order creation
+- Users can view their own orders
+- Admin users can view all orders
+
+Order request example:
+
+```json
+{
+  "products": ["product_id_here"]
+}
+```
+
+Authorization header:
+
+```text
+Authorization: Bearer your_jwt_token
+```
+
+## Frontend Integration
+
+The existing static frontend is connected to the backend using JavaScript.
+
+Files added:
+
+```text
+js/api.js
+js/auth.js
+js/products.js
+js/orders.js
+```
+
+### Login Page
+
+File:
+
+```text
+login.html
+```
+
+Changes:
+
+- Login form calls `POST /api/auth/login`
+- JWT token is saved in `localStorage`
+- User is redirected to `index.html`
+
+### Register Page
+
+File:
+
+```text
+register.html
+```
+
+Changes:
+
+- Register form calls `POST /api/auth/register`
+- Password confirmation is checked
+- User is redirected to `login.html`
+
+### Product Listing Page
+
+File:
+
+```text
+index.html
+```
+
+Changes:
+
+- Products are fetched from `GET /api/products`
+- Product cards are rendered dynamically
+- Search input calls backend search
+- Category filter calls backend category filtering
+- Add to Cart button creates an order through `POST /api/orders`
+
+### Orders Page
+
+File:
+
+```text
+orders.html
+```
+
+Changes:
+
+- Orders are fetched from `GET /api/orders`
+- JWT token is used for authorization
+- User order history is displayed dynamically
+
+## Default Product Seeding
+
+When the products collection is empty, the backend automatically inserts default ForgeCart products:
+
+- Hackathon Hoodie 2026
+- Code Powered T-Shirt
+- Premium Dev Backpack
+- API Access Token
+- Developer Sticker Pack
+- Debug Fuel Mug
+
+This makes the product page usable immediately after connecting the database.
+
+## Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
+```
+
+An example file is included:
+
+```text
+.env.example
+```
+
+Important:
+
+- Do not commit real passwords or secrets
+- Replace `<db_password>` with your real MongoDB Atlas password
+- Encode special characters in the password if needed
+
+Examples:
+
+```text
+@ becomes %40
+# becomes %23
+% becomes %25
+& becomes %26
+```
+
+## MongoDB Atlas Setup
+
+To connect with MongoDB Atlas:
+
+1. Create a database user in Atlas Database Access
+2. Add your current public IP in Atlas Network Access
+3. Use the Atlas connection string in `.env`
+4. Restart the backend server
+
+For local development, Atlas Network Access can use your current IP:
+
+```text
+your_public_ip/32
+```
+
+For temporary testing only, you can allow:
+
+```text
+0.0.0.0/0
+```
+
+## Installation
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+## Run Project
+
+Start the backend:
+
+```bash
+npm start
+```
+
+Development mode with nodemon:
+
+```bash
+npm run dev
+```
+
+Open the project in browser:
+
+```text
+http://localhost:5000/index.html
+```
+
+The backend must stay running while using the frontend.
+
+## API Summary
+
+Auth:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+```
+
+Products:
+
+```text
+GET /api/products
+GET /api/products?search=
+GET /api/products?category=
+POST /api/products
+PUT /api/products/:id
+DELETE /api/products/:id
+```
+
+Orders:
+
+```text
+POST /api/orders
+GET /api/orders
+```
+
+Health:
+
+```text
+GET /health
+```
+
+## Error Handling
+
+The backend handles:
+
+- Duplicate user registration
+- Invalid login credentials
+- Missing JWT token
+- Invalid JWT token
+- Unauthorized access
+- Admin-only access
+- Product not found
+- Out-of-stock products
+- MongoDB connection errors
+- Unknown routes
+
+## Current Status
+
+ForgeCart is no longer frontend-only. It is now a working full-stack e-commerce management system with backend APIs, authentication, database storage, and frontend API integration.
+
+## Future Enhancements
+
+Possible future improvements:
+
+- Admin dashboard UI
+- Cart persistence before checkout
+- Payment gateway integration
+- Product image upload
+- User profile page
+- Order status management
+- Wishlist feature
+- Product reviews and ratings
+

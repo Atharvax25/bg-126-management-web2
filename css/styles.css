@@ -111,6 +111,60 @@ h1, h2, h3, h4, .nav-brand, .product-title {
   color: #fff;
 }
 
+.app-message {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2000;
+  max-width: min(360px, calc(100vw - 40px));
+  padding: 14px 18px;
+  border-radius: var(--radius-xs);
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.25s ease-out;
+}
+
+.app-message.success {
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #d1fae5;
+}
+
+.app-message.error {
+  border-color: rgba(239, 68, 68, 0.55);
+  color: #fee2e2;
+}
+
+.app-message.hidden {
+  display: none;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 28px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.product-description {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+.product-stock {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  margin-bottom: 14px;
+}
+
+.btn-add-circle:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 /* ==========================================
    SCROLLBAR
    ========================================== */
