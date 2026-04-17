@@ -535,3 +535,183 @@ Possible future improvements:
 - Wishlist feature
 - Product reviews and ratings
 
+## Latest Advanced Feature Updates
+
+The project was further upgraded with production-style e-commerce features on both backend and frontend.
+
+### Smart Search Autocomplete
+
+Added a smart product search API:
+
+```text
+GET /api/products/search?q=keyword
+```
+
+Features:
+
+- Searches products by name
+- Uses case-insensitive regex matching
+- Returns the top 5 matching products
+- Displays autocomplete suggestions under the search input on the store page
+
+### Inventory Alert System
+
+Inventory handling was improved with low-stock monitoring.
+
+Features:
+
+- Product stock is validated so it cannot become negative
+- When product stock is below `5`, the backend logs:
+
+```text
+Low stock alert: product_name
+```
+
+- Low-stock checks run when products are fetched, searched, created, updated, or added to cart
+
+### Persistent Multi-User Cart
+
+A new database-backed cart system was added.
+
+New model:
+
+```text
+backend/models/Cart.js
+```
+
+Cart fields:
+
+- `userId`
+- `products`
+- `productId`
+- `quantity`
+- `updatedAt`
+
+Cart APIs:
+
+```text
+POST /api/cart
+GET /api/cart
+DELETE /api/cart/:productId
+```
+
+Features:
+
+- Cart is stored in MongoDB
+- Cart persists after logout/login
+- Each user has a separate cart
+- Add to Cart now stores items in the user's saved cart
+- Cart page dynamically loads saved cart items from database
+- Cart checkout creates an order from saved cart products
+
+### Bookmark System
+
+Users can bookmark products.
+
+APIs:
+
+```text
+POST /api/bookmark/:productId
+GET /api/bookmark
+```
+
+Features:
+
+- Add/remove bookmarked products
+- View saved bookmarks on `bookmarks.html`
+- Bookmark data is stored inside the user document
+
+### Price Drop Notification Simulation
+
+When an admin updates a product and reduces its price, the backend simulates a notification by logging a message.
+
+Example:
+
+```text
+Price drop notification: Product price dropped from oldPrice to newPrice.
+```
+
+### Product Recommendation System
+
+Added a recommendation API:
+
+```text
+GET /api/products/recommend/:productId
+```
+
+Recommendations are based on:
+
+- Same product category
+- Popular products from order history
+
+The frontend displays recommended products after clicking the `Recommend` button.
+
+### Price Range Filter
+
+Product listing now supports price filtering.
+
+Example:
+
+```text
+GET /api/products?minPrice=100&maxPrice=1000
+```
+
+The store page includes `Min price` and `Max price` fields.
+
+### Admin Dashboard Analytics
+
+Added an admin-only dashboard API:
+
+```text
+GET /api/admin/dashboard
+```
+
+Dashboard returns:
+
+- Total users
+- Total orders
+- Total revenue
+- Top-selling products
+
+Frontend page:
+
+```text
+admin-dashboard.html
+```
+
+### Order Status Tracking
+
+Orders now support status tracking.
+
+Statuses:
+
+- `pending`
+- `shipped`
+- `delivered`
+
+Admin-only API:
+
+```text
+PUT /api/orders/:id/status
+```
+
+Admin users can update order status from the orders page.
+
+### New Frontend Pages Added
+
+```text
+bookmarks.html
+admin-dashboard.html
+```
+
+### New Frontend JavaScript Added
+
+```text
+js/cart.js
+js/bookmarks.js
+js/admin.js
+```
+
+### Updated Project Status
+
+ForgeCart now includes authentication, product management, smart search, persistent cart, bookmarks, recommendations, admin analytics, inventory alerts, order status tracking, and MongoDB-backed data persistence.
