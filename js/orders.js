@@ -1,5 +1,6 @@
 const orderContainer = document.getElementById('order-history-container');
 const money = (value) => `$${Number(value).toFixed(2)}`;
+const isAdmin = () => getUser()?.role === 'admin';
 
 const renderOrders = (orders) => {
   if (!orderContainer) {
@@ -20,6 +21,16 @@ const renderOrders = (orders) => {
 
     const productNames = order.products.map((product) => product.name).join(', ');
 
+    const statusCell = isAdmin()
+      ? `
+        <select class="form-control order-status-select" data-order-id="${order._id}">
+          <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>pending</option>
+          <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>shipped</option>
+          <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>delivered</option>
+        </select>
+      `
+      : `<span class="status-badge"><i class="fas fa-check-circle"></i> ${order.status}</span>`;
+
     return `
       <tr>
         <td style="font-family: monospace; font-size: 0.95rem; color: var(--text-main);">
@@ -33,7 +44,7 @@ const renderOrders = (orders) => {
           <div style="margin-top: 8px; color: var(--text-muted); font-size: 0.85rem;">${productNames}</div>
         </td>
         <td style="color: var(--primary); font-weight:700;">${money(order.totalAmount)}</td>
-        <td><span class="status-badge"><i class="fas fa-check-circle"></i> ${order.status}</span></td>
+        <td>${statusCell}</td>
       </tr>
     `;
   }).join('');
@@ -79,5 +90,30 @@ const loadOrders = async () => {
     orderContainer.innerHTML = `<div class="glass empty-state">${error.message}</div>`;
   }
 };
+
+const updateOrderStatus = async (orderId, status) => {
+  try {
+    await requestJson(`/orders/${orderId}/status`, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify({ status })
+    });
+
+    showMessage('Order status updated.', 'success');
+    await loadOrders();
+  } catch (error) {
+    showMessage(error.message, 'error');
+  }
+};
+
+if (orderContainer) {
+  orderContainer.addEventListener('change', (event) => {
+    const select = event.target.closest('[data-order-id]');
+
+    if (select) {
+      updateOrderStatus(select.dataset.orderId, select.value);
+    }
+  });
+}
 
 document.addEventListener('DOMContentLoaded', loadOrders);

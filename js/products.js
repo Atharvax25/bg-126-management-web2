@@ -1,6 +1,11 @@
 const productGrid = document.getElementById('product-grid');
 const searchInput = document.getElementById('search-input');
 const categoryFilter = document.getElementById('category-filter');
+const minPriceInput = document.getElementById('min-price');
+const maxPriceInput = document.getElementById('max-price');
+const searchSuggestions = document.getElementById('search-suggestions');
+const recommendationSection = document.getElementById('recommendation-section');
+const recommendationGrid = document.getElementById('recommendation-grid');
 
 const money = (value) => `$${Number(value).toFixed(2)}`;
 
@@ -25,6 +30,14 @@ const productCard = (product) => `
         <i class="fas fa-plus"></i>
       </button>
     </div>
+    <div class="product-actions">
+      <button class="mini-action-btn" data-bookmark-id="${product._id}">
+        <i class="fas fa-bookmark"></i> Bookmark
+      </button>
+      <button class="mini-action-btn" data-recommend-id="${product._id}">
+        <i class="fas fa-wand-magic-sparkles"></i> Recommend
+      </button>
+    </div>
   </div>
 `;
 
@@ -36,6 +49,8 @@ const loadProducts = async () => {
   const params = new URLSearchParams();
   const search = searchInput ? searchInput.value.trim() : '';
   const category = categoryFilter ? categoryFilter.value : 'all';
+  const minPrice = minPriceInput ? minPriceInput.value.trim() : '';
+  const maxPrice = maxPriceInput ? maxPriceInput.value.trim() : '';
 
   if (search) {
     params.set('search', search);
@@ -43,6 +58,14 @@ const loadProducts = async () => {
 
   if (category && category !== 'all') {
     params.set('category', category);
+  }
+
+  if (minPrice) {
+    params.set('minPrice', minPrice);
+  }
+
+  if (maxPrice) {
+    params.set('maxPrice', maxPrice);
   }
 
   productGrid.innerHTML = '<div class="glass empty-state">Loading products...</div>';
@@ -61,6 +84,89 @@ const loadProducts = async () => {
   }
 };
 
+const renderSearchSuggestions = (products) => {
+  if (!searchSuggestions) {
+    return;
+  }
+
+  if (products.length === 0) {
+    searchSuggestions.innerHTML = '<button type="button" class="suggestion-item">No matches found</button>';
+    searchSuggestions.classList.add('active');
+    return;
+  }
+
+  searchSuggestions.innerHTML = products.map((product) => `
+    <button type="button" class="suggestion-item" data-suggestion="${product.name}">
+      <img src="${product.image}" alt="${product.name}">
+      <span>${product.name}</span>
+      <strong>${money(product.price)}</strong>
+    </button>
+  `).join('');
+  searchSuggestions.classList.add('active');
+};
+
+const loadSearchSuggestions = async () => {
+  if (!searchSuggestions || !searchInput) {
+    return;
+  }
+
+  const keyword = searchInput.value.trim();
+
+  if (keyword.length < 2) {
+    searchSuggestions.classList.remove('active');
+    searchSuggestions.innerHTML = '';
+    return;
+  }
+
+  try {
+    const products = await requestJson(`/products/search?q=${encodeURIComponent(keyword)}`);
+    renderSearchSuggestions(products);
+  } catch (error) {
+    searchSuggestions.innerHTML = '';
+    searchSuggestions.classList.remove('active');
+  }
+};
+
+const toggleBookmark = async (productId) => {
+  if (!getToken()) {
+    showMessage('Please sign in before bookmarking products.', 'error');
+    window.location.href = 'login.html';
+    return;
+  }
+
+  try {
+    const data = await requestJson(`/bookmark/${productId}`, {
+      method: 'POST',
+      headers: authHeaders()
+    });
+
+    showMessage(data.message, 'success');
+  } catch (error) {
+    showMessage(error.message, 'error');
+  }
+};
+
+const loadRecommendations = async (productId) => {
+  if (!recommendationSection || !recommendationGrid) {
+    return;
+  }
+
+  recommendationSection.style.display = 'block';
+  recommendationGrid.innerHTML = '<div class="glass empty-state">Loading recommendations...</div>';
+
+  try {
+    const products = await requestJson(`/products/recommend/${productId}`);
+
+    recommendationGrid.innerHTML = products.length
+      ? products.map(productCard).join('')
+      : '<div class="glass empty-state">No recommendations found.</div>';
+
+    recommendationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    recommendationGrid.innerHTML = `<div class="glass empty-state">${error.message}</div>`;
+  }
+};
+
 const addToCart = async (productId) => {
   if (!getToken()) {
     showMessage('Please sign in before adding products.', 'error');
@@ -69,13 +175,13 @@ const addToCart = async (productId) => {
   }
 
   try {
-    await requestJson('/orders', {
+    await requestJson('/cart', {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ products: [productId] })
+      body: JSON.stringify({ productId, quantity: 1 })
     });
 
-    showMessage('Added to cart and order created.', 'success');
+    showMessage('Added to your saved cart.', 'success');
     await loadProducts();
   } catch (error) {
     showMessage(error.message, 'error');
@@ -87,7 +193,22 @@ let searchTimer;
 if (searchInput) {
   searchInput.addEventListener('input', () => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(loadProducts, 300);
+    searchTimer = setTimeout(() => {
+      loadProducts();
+      loadSearchSuggestions();
+    }, 300);
+  });
+}
+
+if (searchSuggestions) {
+  searchSuggestions.addEventListener('click', (event) => {
+    const item = event.target.closest('[data-suggestion]');
+
+    if (item && searchInput) {
+      searchInput.value = item.dataset.suggestion;
+      searchSuggestions.classList.remove('active');
+      loadProducts();
+    }
   });
 }
 
@@ -95,14 +216,58 @@ if (categoryFilter) {
   categoryFilter.addEventListener('change', loadProducts);
 }
 
+if (minPriceInput) {
+  minPriceInput.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(loadProducts, 300);
+  });
+}
+
+if (maxPriceInput) {
+  maxPriceInput.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(loadProducts, 300);
+  });
+}
+
 if (productGrid) {
   productGrid.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-product-id]');
+    const addButton = event.target.closest('[data-product-id]');
+    const bookmarkButton = event.target.closest('[data-bookmark-id]');
+    const recommendButton = event.target.closest('[data-recommend-id]');
 
-    if (button) {
-      addToCart(button.dataset.productId);
+    if (addButton) {
+      addToCart(addButton.dataset.productId);
+    }
+
+    if (bookmarkButton) {
+      toggleBookmark(bookmarkButton.dataset.bookmarkId);
+    }
+
+    if (recommendButton) {
+      loadRecommendations(recommendButton.dataset.recommendId);
     }
   });
 
   document.addEventListener('DOMContentLoaded', loadProducts);
+}
+
+if (recommendationGrid) {
+  recommendationGrid.addEventListener('click', (event) => {
+    const addButton = event.target.closest('[data-product-id]');
+    const bookmarkButton = event.target.closest('[data-bookmark-id]');
+    const recommendButton = event.target.closest('[data-recommend-id]');
+
+    if (addButton) {
+      addToCart(addButton.dataset.productId);
+    }
+
+    if (bookmarkButton) {
+      toggleBookmark(bookmarkButton.dataset.bookmarkId);
+    }
+
+    if (recommendButton) {
+      loadRecommendations(recommendButton.dataset.recommendId);
+    }
+  });
 }

@@ -77,6 +77,10 @@ const updateAuthLinks = () => {
       window.location.href = 'login.html';
     });
   }
+
+  document.querySelectorAll('.admin-link').forEach((link) => {
+    link.style.display = user.role === 'admin' ? 'inline-flex' : 'none';
+  });
 };
 
 document.addEventListener('DOMContentLoaded', updateAuthLinks);

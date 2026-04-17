@@ -7,6 +7,9 @@ const Product = require('./models/Product');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const bookmarkRoutes = require('./routes/bookmarkRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 dotenv.config();
 
@@ -20,6 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/bookmark', bookmarkRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/cart', cartRoutes);
 
 app.use(express.static(path.join(__dirname, '..')));
 
